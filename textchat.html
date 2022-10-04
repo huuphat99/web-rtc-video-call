@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head lang="ja">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>SkyWay JS SDK Tutorial</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>Chat</h1>
+    <div>
+        <input type="text" placeholder="PeerID" id="peer-id-input">
+        <button id="connect">Connect</button>
+        <button id="close">Close</button>
+    </div>
+    <div>
+        <p>My ID: <span id="my-id">...</span></p>
+        <p>Peer ID: <span id="peer-id">...</span></p>
+    </div>
+    <hr>
+    <div>
+        <input type="text" placeholder="Chat Message" id="message">
+        <button id="send">Send</button>
+    </div>
+    <div id="messages"></div>
+</body>
+<script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+<script type="text/javascript" src="https://cdn.webrtc.ecl.ntt.com/skyway-latest.js"></script>
+<script type="text/javascript" src="textchat.js"></script>
+</html>

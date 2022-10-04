@@ -1,0 +1,696 @@
+<!doctype html>
+<!--
+Material Design Lite
+Copyright 2015 Google Inc. All rights reserved.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+https://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License
+-->
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="description" content="A front-end template that helps you build fast, modern mobile web apps.">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0">
+    <title>GIBARE</title>
+    <!-- Add to homescreen for Chrome on Android -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <link rel="icon" sizes="192x192" href="images/android-desktop.png">
+    <!-- Add to homescreen for Safari on iOS -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="Material Design Lite">
+    <link rel="apple-touch-icon-precomposed" href="images/ios-desktop.png">
+    <!-- Tile icon for Win8 (144x144 + tile color) -->
+    <meta name="msapplication-TileImage" content="images/touch/ms-touch-icon-144x144-precomposed.png">
+    <meta name="msapplication-TileColor" content="#3372DF">
+    <link rel="shortcut icon" href="images/favicon.png">
+    <!-- SEO: If your mobile URL is different from the desktop URL, add a canonical link to the desktop page https://developers.google.com/webmasters/smartphone-sites/feature-phones -->
+    <!--
+  <link rel="canonical" href="http://www.example.com/">
+-->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:regular,bold,italic,thin,light,bolditalic,black,medium&amp;lang=en">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.cyan-light_blue.min.css">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" integrity="sha384-WskhaSGFgHYWDcbwN70/dfYBj47jz9qbsMId/iRN3ewGhXQFZCSftd1LZCfmhktB" crossorigin="anonymous">
+    <link rel="stylesheet" href="css/weather-icons.min.css">
+    <link rel="stylesheet" href="css/weather-icons-wind.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <style>
+    #overview {}
+
+    #information {
+        display: none;
+    }
+
+    #navigation {
+        display: none;
+    }
+
+    #control {
+        display: none;
+    }
+
+    #view-source {
+        position: fixed;
+        display: block;
+        right: 0;
+        bottom: 0;
+        margin-right: 40px;
+        margin-bottom: 40px;
+        z-index: 900;
+    }
+
+    #my-video {
+        display: none;
+    }
+
+    #their-video {
+        position: absolute;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: #eee;
+        display: none;
+    }
+
+    #display_canvas {
+        position: absolute;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: #eee;
+    }
+
+    #control_buttons {
+        padding: 10px;
+    }
+
+    #video-container {
+        padding: 10px;
+        text-align: center;
+        z-index: 5
+    }
+
+    #logger {
+        background-color: rgba(255, 255, 255, 0.2);
+        color: #000;
+        text-align: center;
+        z-index: 10;
+        /*display: none;*/
+    }
+
+    #step1-error,
+    #step2,
+    #step3 {
+        display: none;
+    }
+
+    #my-id {
+        font-weight: bold;
+    }
+
+    #map {
+        height: 400px;
+        width: 100%;
+        background-color: #eee;
+    }
+
+    .demo-list-icon {
+        width: 300px;
+    }
+
+    #layer {
+        display: none;
+        position: absolute;
+        left: 0px;
+        top: 0px;
+        width: 100%;
+        height: 100%;
+        background-color: black;
+        opacity: 0.8;
+        z-index: 50
+    }
+
+    #popup {
+        display: none;
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        width: 40%;
+        height: 40%;
+        text-align: center;
+        margin: auto;
+        background-color: rgba(255, 255, 255, 0.8);
+        border-radius: 5px;
+        font-size: 24px;
+        font-weight: bold;
+        z-index: 55
+    }
+    </style>
+</head>
+
+<body>
+    <div class="demo-layout mdl-layout mdl-js-layout mdl-layout--fixed-header">
+        <header class="demo-header mdl-layout__header mdl-color--grey-100 mdl-color-text--grey-600">
+            <div class="mdl-layout__header-row">
+                <span class="mdl-layout-title">GIBARE</span>
+                <div class="mdl-layout-spacer"></div>
+                <div class="mdl-textfield mdl-js-textfield mdl-textfield--expandable">
+                    <label class="mdl-button mdl-js-button mdl-button--icon" for="search">
+                        <i class="material-icons">search</i>
+                    </label>
+                    <div class="mdl-textfield__expandable-holder">
+                        <input class="mdl-textfield__input" type="text" id="search">
+                        <label class="mdl-textfield__label" for="search">Enter your query...</label>
+                    </div>
+                </div>
+                <button class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon" id="hdrbtn">
+                    <i class="material-icons">more_vert</i>
+                </button>
+                <ul class="mdl-menu mdl-js-menu mdl-js-ripple-effect mdl-menu--bottom-right" for="hdrbtn">
+                    <li class="mdl-menu__item">About</li>
+                    <li class="mdl-menu__item">Contact</li>
+                    <li class="mdl-menu__item">Legal information</li>
+                </ul>
+            </div>
+        </header>
+        <div class="demo-drawer mdl-layout__drawer mdl-color--blue-grey-900 mdl-color-text--blue-grey-50">
+            <header class="demo-drawer-header">
+                <img src="images/user.jpg" class="demo-avatar">
+                <div class="demo-avatar-dropdown">
+                    <span>hello@example.com</span>
+                    <div class="mdl-layout-spacer"></div>
+                    <button id="accbtn" class="mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--icon">
+                        <i class="material-icons" role="presentation">arrow_drop_down</i>
+                        <span class="visuallyhidden">Accounts</span>
+                    </button>
+                    <ul class="mdl-menu mdl-menu--bottom-right mdl-js-menu mdl-js-ripple-effect" for="accbtn">
+                        <li class="mdl-menu__item">hello@example.com</li>
+                        <li class="mdl-menu__item">info@example.com</li>
+                        <li class="mdl-menu__item"><i class="material-icons">add</i>Add another account...</li>
+                    </ul>
+                </div>
+            </header>
+            <nav class="demo-navigation mdl-navigation mdl-color--blue-grey-800">
+                <a class="mdl-navigation__link" href="#"><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">home</i>Overview</a>
+                <a class="mdl-navigation__link" href="#information"><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">person</i>Information</a>
+                <a class="mdl-navigation__link" href="#navigation"><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">navigation</i>Navigation</a>
+                <a class="mdl-navigation__link" href="#control"><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">control_camera</i>Control</a>
+                <a class="mdl-navigation__link" href="textchat.html"><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">chat</i>Textchat</a>
+                <a class="mdl-navigation__link" href="videochat.html"><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">videocam</i>Videochat</a>
+                <div class="mdl-layout-spacer"></div>
+                <a class="mdl-navigation__link" href=""><i class="mdl-color-text--blue-grey-400 material-icons" role="presentation">help_outline</i><span class="visuallyhidden">Help</span></a>
+            </nav>
+        </div>
+        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js" integrity="sha384-smHYKdLADwkXOn1EmN1qk/HfnUcbVRZyYmZ4qpPea6sjB/pTJ0euyQp0Mk8ck+5T" crossorigin="anonymous"></script>
+        <main class="mdl-layout__content mdl-color--grey-100">
+            <canvas id="display_canvas"></canvas>
+            <section id="overview">
+                <!-- Popup -->
+                <div id="layer">
+                    <img src="images/Emergency.gif" width="100%" height="100%">
+                </div>
+                <div id="popup">
+                    <div class="text-center">Emergency Call</div>
+                    <p></p>
+                    <img src="images/fall.jpg" width="50%" height="50%" style="filter: grayscale(100%);">
+                    <p></p>
+                    <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--accent" id="close">OK</button>
+                </div>
+                <video id="my-video" muted="true" autoplay></video>
+                <video id="their-video" autoplay></video>
+                <div class="mdl-grid mdl-shadow--2dp mdl-color--white">
+                    <!-- Profile area -->
+                    <div class="mdl-cell mdl-cell--3-col" id="profile">
+                        <div class="mdl-card">
+                            <div class="mdl-card__media">
+                                <img src="images/icon_gchan.png" width="100%" height="75%" border="0" alt="">
+                            </div>
+                            <div class="mdl-card__supporting-text">
+                                <!-- Simple list -->
+                                <ul class="demo-list-item mdl-list">
+                                    <li class="mdl-list__item">
+                                        <span id="target_name" class="mdl-list__item-primary-content">
+                                            <i class="material-icons mdl-list__item-icon">face</i>
+                                        </span>
+                                    </li>
+                                    <li class="mdl-list__item">
+                                        <span id="target_age" class="mdl-list__item-primary-content">
+                                            <i class="material-icons mdl-list__item-icon">favorite</i>
+                                        </span>
+                                    </li>
+                                    <li class="mdl-list__item">
+                                        <span id="target_msg" class="mdl-list__item-primary-content">
+                                            <i class="material-icons mdl-list__item-icon">warning</i>
+                                        </span>
+                                    </li>
+                                </ul>
+                            </div>
+                            <!-- Map area -->
+                            <div id="map"></div>
+                            <script type="text/javascript">
+                            var map;
+
+                            function initMap() {
+                                var tokyo = { lat: 35.681382, lng: 139.766084 };
+                                map = new google.maps.Map(document.getElementById('map'), {
+                                    zoom: 15,
+                                    center: tokyo
+                                });
+                            }
+
+                            function updateMap() {
+                                if (jsonMetadata.latitude != null && jsonMetadata.longitude != null) {
+                                    var gps = { lat: Number(jsonMetadata.latitude), lng: Number(jsonMetadata.longitude) };
+                                    map.panTo(gps);
+                                    var marker = new google.maps.Marker({
+                                        position: gps,
+                                        map: map,
+                                        animation: google.maps.Animation.BOUNCE
+                                    });
+                                }
+                            }
+                            </script>
+                        </div>
+                    </div>
+                    <!-- Video area -->
+                    <div class="mdl-cell mdl-cell--7-col" id="video-container">
+                        <style type="text/css">
+                        #realtimeClock {
+                            font-size: 24px;
+                            font-weight: bold;
+                            display: inline-block;
+                            padding: 10px;
+                        }
+
+                        #weather {
+                            font-size: 32px;
+                            font-weight: bold;
+                            display: inline-block;
+                            padding: 10px;
+                        }
+
+                        #stopWatch {
+                            font-size: 18px;
+                            font-weight: bold;
+                            padding: 10px;
+                        }
+                        </style>
+                        <div class="jumbotron" style="background-color: rgba(255, 255, 255, 0.2); padding: 10px;">
+                            <div id="realtimeClock" class="text-center"></div>
+                            <script type="text/javascript">
+                            var nowTime;
+                            var stopWatchMin = 0;
+                            var stopWatchSec = 0;
+                            setInterval(function() {
+                                // realtimeClock
+                                nowTime = new Date();
+                                var date = nowTime.toDateString();
+                                var time = ("0" + (nowTime.getHours())).slice(-2) + " : " + ("0" + (nowTime.getMinutes())).slice(-2) + " : " + ("0" + (nowTime.getSeconds())).slice(-2);
+                                document.getElementById("realtimeClock").innerHTML = date + "<br>" + time;
+
+                                // stopWatch
+                                if (calling) {
+                                    if (stopWatchSec++ == 59) {
+                                        stopWatchSec = 0;
+                                        stopWatchMin++;
+                                    }
+                                    document.getElementById("stopWatch").innerHTML = stopWatchMin + " min " + stopWatchSec + " sec ";
+                                }
+                            }, 1000);
+                            </script>
+                            <div id="weather" class="text-center">
+                                <div class="weather-info">
+                                    <i class="wi" id="icon"></i>
+                                    <span id="temp"></span><i class="wi wi-celsius"></i>
+                                </div>
+                                <ul class="list-inline">
+                                    <li id="name" class="list-inline-item"></li>
+                                    <li id="desc" class="list-inline-item"></li>
+                                </ul>
+                            </div>
+                        </div>
+                        <script type="text/javascript">
+                        $(function() {
+                            var API_KEY = 'f31ed1d2bcde371b7f7c769c07491313';
+                            var city = 'Tokyo';
+                            var url = 'https://api.openweathermap.org/data/2.5/weather?q=' + city + ',jp&units=metric&APPID=' + API_KEY;
+                            $.getJSON(url, function(data) {
+                                console.log(data);
+                                if (!data.cod || data.cod != 200) {
+                                    return;
+                                }
+
+                                $("#desc").text(data.weather[0].description);
+                                $("#temp").text(data.main.temp);
+                                $("#name").text(data.name);
+
+                                var id = data.weather[0].id;
+                                var unixTime = Math.floor((new Date()).getTime() / 1000);
+                                if (data.sys.sunrise <= unixTime && unixTime <= data.sys.sunset) {
+                                    $("#icon").addClass("wi-owm-day-" + id);
+                                } else {
+                                    $("#icon").addClass("wi-owm-night-" + id);
+                                }
+                            });
+                        });
+                        </script>
+                        <div id="stopWatch" class="text-center"></div>
+                        <p>passed from calling</p>
+                        <div id="control_buttons">
+                            <button id="left_button" class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored">
+                                <i class="material-icons">arrow_back</i>
+                            </button>
+                            <button id="down_button" class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored">
+                                <i class="material-icons">arrow_downward</i>
+                            </button>
+                            <button id="up_button" class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored">
+                                <i class="material-icons">arrow_upward</i>
+                            </button>
+                            <button id="right_button" class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored">
+                                <i class="material-icons">arrow_forward</i>
+                            </button>
+                        </div>
+                    </div>
+                    <!-- Steps -->
+                    <div class="mdl-cell mdl-cell--2-col" id="logger">
+                        <!-- <h2>Debug</h2> -->
+                        <div class="mdl-textfield mdl-js-textfield">
+                            <label for="audioSource">Audio input source: </label>
+                            <select id="audioSource" class="mdl-textfield__input"></select>
+                        </div>
+                        <div class="mdl-textfield mdl-js-textfield">
+                            <label for="videpSource">Video source: </label>
+                            <select id="videoSource" class="mdl-textfield__input"></select>
+                        </div>
+                        <!-- Get local audio/video stream -->
+                        <div id="step1">
+                            <p>Please click `allow` on the top of the screen so we can access your webcam and microphone for calls.</p>
+                            <div id="step1-error">
+                                <p>Failed to access the webcam and microphone. Make sure to run this demo on an http server and click allow when asked for permission by the browser.</p>
+                                <a href="#" class="pure-button pure-button-error" id="step1-retry">Try again</a>
+                            </div>
+                        </div>
+                        <!-- Make calls to others -->
+                        <div id="step2">
+                            <p>My ID: <span id="my-id">...</span></p>
+                            <form id="make-call" class="pure-form">
+                                <!-- Textfield with Floating Label -->
+                                <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                                    <input class="mdl-textfield__input" type="text" id="callto-id">
+                                    <label class="mdl-textfield__label" for="callto-id">Input call user ID...</label>
+                                </div>
+                                <!-- Accent-colored raised button with ripple -->
+                                <button type="submit" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">Call</button>
+                            </form>
+                        </div>
+                        <!-- Call in progress -->
+                        <div id="step3">
+                            <p>Currently in call with <span id="their-id">...</span></p>
+                            <!-- Accent-colored raised button with ripple -->
+                            <button href="#" id="end-call" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">End Call</button>
+                        </div>
+                        <h5>List:</h5>
+                        <ul class='demo-list-icon mdl-list' id="peerList">
+                        </ul>
+<!--                         <h5>Debug:</h5>
+                        <div id="debug"></div>
+                        <h5>Messages:</h5>
+                        <div id="messages"></div> -->
+                    </div>
+                </div>
+            </section>
+            <section id="information" style="font-size: 100%; padding: 10px;">
+                <table id="tb-basic" class="mdl-data-table mdl-js-data-table mdl-shadow--2dp" style="display: inline-block;">
+                    <thead>
+                        <tr>
+                            <th style="font-size: 250%;">Basic Information</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th class="mdl-data-table__cell--non-numeric">Name</th>
+                            <td id="tb_name" class="mdl-data-table__cell--non-numeric">Unknown</td>
+                        </tr>
+                        <tr>
+                            <th class="mdl-data-table__cell--non-numeric">Kana</th>
+                            <td id="tb_kana" class="mdl-data-table__cell--non-numeric">Unknown</td>
+                        </tr>
+                        <tr>
+                            <th class="mdl-data-table__cell--non-numeric">Age</th>
+                            <td id="tb_age" class="mdl-data-table__cell--non-numeric">Unknown</td>
+                        </tr>
+                        <tr>
+                            <th class="mdl-data-table__cell--non-numeric">Birth</th>
+                            <td id="tb_birth" class="mdl-data-table__cell--non-numeric">Unknown</td>
+                        </tr>
+                        <tr>
+                            <th class="mdl-data-table__cell--non-numeric">Blood Type</th>
+                            <td id="tb_bloodtype" class="mdl-data-table__cell--non-numeric">Unknown</td>
+                        </tr>
+                        <tr>
+                            <th class="mdl-data-table__cell--non-numeric">Sex</th>
+                            <td id="tb_sex" class="mdl-data-table__cell--non-numeric">Unknown</td>
+                        </tr>
+                        <tr>
+                            <th class="mdl-data-table__cell--non-numeric">Address</th>
+                            <td id="tb_address" class="mdl-data-table__cell--non-numeric">Unknown</td>
+                        </tr>
+                        <tr>
+                            <th class="mdl-data-table__cell--non-numeric">Phone</th>
+                            <td id="tb_phone" class="mdl-data-table__cell--non-numeric">Unknown</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <table id="tb-emerg" class="mdl-data-table mdl-js-data-table mdl-shadow--2dp" style="display: inline-block;">
+                    <thead>
+                        <tr>
+                            <th style="font-size: 250%;">Emergency Contact</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th class="mdl-data-table__cell--non-numeric">Name</th>
+                            <td id="tb_em_name" class="mdl-data-table__cell--non-numeric">Unknown</td>
+                        </tr>
+                        <tr>
+                            <th class="mdl-data-table__cell--non-numeric">Relation</th>
+                            <td id="tb_em_relation" class="mdl-data-table__cell--non-numeric">Unknown</td>
+                        </tr>
+                        <tr>
+                            <th class="mdl-data-table__cell--non-numeric">Address</th>
+                            <td id="tb_em_address" class="mdl-data-table__cell--non-numeric">Unknown</td>
+                        </tr>
+                        <tr>
+                            <th class="mdl-data-table__cell--non-numeric">Phone</th>
+                            <td id="tb_em_phone" class="mdl-data-table__cell--non-numeric">Unknown</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+            <section id="navigation">
+                <style type="text/css">
+                #navMap {
+                    position: absolute;
+                    width: 100%;
+                    height: 100%;
+                }
+
+                #floating-panel {
+                    position: absolute;
+                    top: 10px;
+                    left: 25%;
+                    z-index: 5;
+                    background-color: #fff;
+                    padding: 5px;
+                    border: 1px solid #999;
+                    text-align: center;
+                }
+
+                #navDistanceMatrix {
+                    display: none;
+                }
+
+                .box {
+                    position: absolute;
+                    right: 30px;
+                    top: 10px;
+                    padding: 0.5em 1em;
+                    margin: 2em 0;
+                    color: #5d627b;
+                    background: white;
+                    border-top: solid 5px #5d627b;
+                    box-shadow: 0 3px 5px rgba(0, 0, 0, 0.22);
+                    z-index: 900;
+                }
+
+                .box p {
+                    margin: 0;
+                    padding: 0;
+                    font-weight: bold;
+                }
+                </style>
+                <div id="floating-panel" class="mdl-textfield mdl-js-textfield">
+                    <select id="departure" class="mdl-textfield__input">
+                        <optgroup label="品川区">
+                            <option value="荏原消防署">荏原消防署</option>
+                            <option value="大井消防署">大井消防署</option>
+                            <option value="品川消防署">品川消防署</option>
+                        </optgroup>
+                    </select>
+                </div>
+                <div id="navDistanceMatrix" class="box"></div>
+                <div id="navMap"></div>
+                <script type="text/javascript">
+                var dest;
+
+                function initNavMap() {
+                    var directionsService = new google.maps.DirectionsService();
+                    var directionsDisplay = new google.maps.DirectionsRenderer();
+                    var tokyo = { lat: 35.681382, lng: 139.766084 };
+                    var mapOptions = {
+                        zoom: 15,
+                        center: tokyo
+                    }
+                    var navMap = new google.maps.Map(document.getElementById('navMap'), mapOptions);
+                    directionsDisplay.setMap(navMap);
+
+                    var distanceMatrixService = new google.maps.DistanceMatrixService();
+
+                    var onChangeHandler = function() {
+                        if (jsonMetadata != null && jsonMetadata.latitude != null && jsonMetadata.longitude != null) {
+                            dest = { lat: Number(jsonMetadata.latitude), lng: Number(jsonMetadata.longitude) };
+                        } else {
+                            dest = tokyo;
+                        }
+                        calculateAndDisplayRoute(directionsService, directionsDisplay);
+                        calculateAndDisplayTime(distanceMatrixService);
+                    };
+                    document.getElementById('departure').addEventListener('change', onChangeHandler);
+                }
+
+                function calculateAndDisplayRoute(directionsService, directionsDisplay) {
+                    directionsService.route({
+                        origin: document.getElementById('departure').value,
+                        destination: dest,
+                        travelMode: 'DRIVING',
+                        drivingOptions: {
+                            departureTime: new Date(Date.now()),
+                            trafficModel: 'bestguess'
+                        },
+                        unitSystem: google.maps.DirectionsUnitSystem.METRIC
+                    }, function(response, status) {
+                        if (status === 'OK') {
+                            directionsDisplay.setDirections(response);
+                        } else {
+                            window.alert('Directions request failed due to ' + status);
+                        }
+                    });
+                }
+
+                function calculateAndDisplayTime(distanceMatrixService) {
+                    distanceMatrixService.getDistanceMatrix({
+                        origins: [document.getElementById('departure').value],
+                        destinations: [dest],
+                        travelMode: 'DRIVING',
+                        drivingOptions: {
+                            departureTime: new Date(Date.now()),
+                            trafficModel: 'bestguess'
+                        },
+                        unitSystem: google.maps.UnitSystem.METRIC
+                    }, function(response, status) {
+                        $("#navDistanceMatrix").empty();
+                        if (status === 'OK') {
+                            for (var i = 0; i < response.originAddresses.length; i++) {
+                                var results = response.rows[i].elements;
+                                for (var j = 0; j < results.length; j++) {
+                                    $("#navDistanceMatrix").append($("<p>").html("Departure: " + response.originAddresses[i]));
+                                    $("#navDistanceMatrix").append($("<p>").html("Destination: " + response.destinationAddresses[j]));
+                                    $("#navDistanceMatrix").append($("<p>").html("Distance: " + results[j].distance.text));
+                                    $("#navDistanceMatrix").append($("<p>").html("Duration: " + results[j].duration.text));
+                                    $('#navDistanceMatrix').show();
+                                }
+                            }
+                        } else {
+                            window.alert('Directions request failed due to ' + status);
+                        }
+                    });
+                }
+
+                function initMaps() {
+                    initMap();
+                    initNavMap();
+                }
+                </script>
+                <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC9QOIcdcpHQ-CVg_2YCQ-We7J2Z9-nNnI&callback=initMaps" async defer></script>
+            </section>
+            <section id="control">
+                <canvas id="display_canvas"></canvas>
+                <div id="control_buttons">
+                    <button id="left_button" class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored">
+                        <i class="material-icons">arrow_back</i>
+                    </button>
+                    <button id="down_button" class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored">
+                        <i class="material-icons">arrow_downward</i>
+                    </button>
+                    <button id="up_button" class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored">
+                        <i class="material-icons">arrow_upward</i>
+                    </button>
+                    <button id="right_button" class="mdl-button mdl-js-button mdl-button--fab mdl-button--colored">
+                        <i class="material-icons">arrow_forward</i>
+                    </button>
+                </div>
+            </section>
+        </main>
+    </div>
+    <a href="https://github.com/google/material-design-lite/blob/mdl-1.x/templates/dashboard/" target="_blank" id="view-source" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored mdl-color-text--white">View Source</a>
+    <script src="https://code.getmdl.io/1.3.0/material.min.js"></script>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script type="text/javascript" src="https://cdn.webrtc.ecl.ntt.com/skyway-latest.js"></script>
+    <script type="text/javascript" src="script.js"></script>
+    <script type="text/javascript" src="render.js"></script>
+    <script type="text/javascript">
+    function locationHashChanged() {
+        if (location.hash === "") {
+            $(overview).css("display", "block");
+            $(information).css("display", "none");
+            $(navigation).css("display", "none");
+            $(control).css("display", "none");
+        } else if (location.hash === "#information") {
+            $(overview).css("display", "none");
+            $(information).css("display", "block");
+            $(navigation).css("display", "none");
+            $(control).css("display", "none");
+        } else if (location.hash === "#navigation") {
+            $(overview).css("display", "none");
+            $(information).css("display", "none");
+            $(navigation).css("display", "block");
+            $(control).css("display", "none");
+        } else if (location.hash === "#control") {
+            $(overview).css("display", "none");
+            $(information).css("display", "none");
+            $(navigation).css("display", "none");
+            $(control).css("display", "block");
+        }
+    }
+
+    window.onhashchange = locationHashChanged;
+    </script>
+</body>
+
+</html>
