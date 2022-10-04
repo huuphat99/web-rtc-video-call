@@ -8,32 +8,9 @@ let calling = false;
 $(function() {
 
     const peer = new Peer({
-        key: '0538e1aa-e871-43b9-8f27-83e9ead7a6bf',
+        key: '50177f5e-e3db-48e4-934a-90ffb8f9f043',
         debug: 3
     });
-
-    (async () => {
-        const apiKey = '0538e1aa-e871-43b9-8f27-83e9ead7a6bf';
-        const recorder = createRecorder(apiKey);
-      
-        // if use authentication
-        // const recorder = createRecorder(apiKey, { auth: { timestamp, credential } });
-        // if use custom ICE configuration
-        // const recorder = createRecorder(apiKey, { iceServers: [], iceTransportPolicy: "relay" });
-      
-        const track = await navigator.mediaDevices
-          .getUserMedia({ audio: true })
-          .then(s => s.getAudioTracks()[0]);
-      
-        const res = await recorder.start(track);
-        console.log(`Your recording id: ${res.id} is now recording...`);
-      
-        // ...
-      
-        await recorder.stop();
-        console.log("recording has stopped!");
-        console.log("uploading will be started soon...");
-      })();
 
     let localStream = null;
     let existingCall = null;
@@ -275,6 +252,55 @@ $(function() {
         $('#step3').show();
     }
 });
+
+let recorder = null;
+
+window.onload = async () => {
+    // SkyWayのAPIキーを定義する
+    const apiKey = '0538e1aa-e871-43b9-8f27-83e9ead7a6bf';
+
+    // ボタンやステータス表示用のDOMを取得
+    const status = document.querySelector("#status");
+    const recStartButton = document.querySelector("#rec-start-button");
+    const recStopButton = document.querySelector("#rec-end-button");
+
+    // 録音開始ボタンを押した際の動作を定義
+    recStartButton.onclick = async () => {
+        // すでに録音が開始している場合は処理をしない
+        if (recorder) return;
+
+        // 録音するトラックを作成する
+        const track = await navigator.mediaDevices
+            .getUserMedia({ audio: true })
+            .then(s => s.getAudioTracks()[0]);
+
+        // 録音するために必要なRecorderオブジェクトを作成
+        recorder = SkyWayRecorder.createRecorder(apiKey)
+
+        // 録音中にエラーが起こった時にコンソールに表示する
+        recorder.on("abort", (err) => {
+          console.log("Aborted!:", err)
+        });
+
+        // 録音を開始する
+        // (1つのRecorderは1つのトラックのみを録音できる。
+        // 複数録音したい場合は、Recorderも同じ数だけ作成する必要がある)
+        const res = await recorder.start(track);
+
+        // startの戻り値に録音ファイル名となる録音IDが返ってきている
+        status.textContent = `録音中 (録音ID: ${res.id})`
+    }
+
+    // 録音停止ボタンを押した際の動作を定義
+    recStopButton.onclick = async () => {
+        // 録音が開始されていない場合は処理をしない
+        if (!recorder) return
+
+        await recorder.stop();
+        status.textContent = "録音完了";
+        recorder = null;
+    }
+}
 
 
 
