@@ -8,7 +8,7 @@ let calling = false;
 $(function() {
 
     const peer = new Peer({
-        key: '50177f5e-e3db-48e4-934a-90ffb8f9f043',
+        key: '0538e1aa-e871-43b9-8f27-83e9ead7a6bf',
         debug: 3
     });
 
