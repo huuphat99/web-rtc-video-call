@@ -8,7 +8,7 @@ let calling = false;
 $(function() {
 
     const peer = new Peer({
-        key: '50177f5e-e3db-48e4-934a-90ffb8f9f043',
+        key: 'e07c4fcf-95ef-430b-b20a-23b6f034c960',
         debug: 3
     });
 
@@ -257,7 +257,7 @@ let recorder = null;
 
 window.onload = async () => {
     // SkyWayのAPIキーを定義する
-    const apiKey = '0538e1aa-e871-43b9-8f27-83e9ead7a6bf';
+    const apiKey = 'e07c4fcf-95ef-430b-b20a-23b6f034c960';
 
     // ボタンやステータス表示用のDOMを取得
     const status = document.querySelector("#status");
