@@ -8,9 +8,32 @@ let calling = false;
 $(function() {
 
     const peer = new Peer({
-        key: '0538e1aa-e871-43b9-8f27-83e9ead7a6bf',
+        key: '50177f5e-e3db-48e4-934a-90ffb8f9f043',
         debug: 3
     });
+
+    (async () => {
+        const apiKey = '50177f5e-e3db-48e4-934a-90ffb8f9f043';
+        const recorder = createRecorder(apiKey);
+      
+        // if use authentication
+        // const recorder = createRecorder(apiKey, { auth: { timestamp, credential } });
+        // if use custom ICE configuration
+        // const recorder = createRecorder(apiKey, { iceServers: [], iceTransportPolicy: "relay" });
+      
+        const track = await navigator.mediaDevices
+          .getUserMedia({ audio: true })
+          .then(s => s.getAudioTracks()[0]);
+      
+        const res = await recorder.start(track);
+        console.log(`Your recording id: ${res.id} is now recording...`);
+      
+        // ...
+      
+        await recorder.stop();
+        console.log("recording has stopped!");
+        console.log("uploading will be started soon...");
+      })();
 
     let localStream = null;
     let existingCall = null;
